@@ -14,7 +14,8 @@
       "Bash(schtasks *)",
       "Bash(netstat -ano)",
       "Bash(node \"C:\\\\Users\\\\ofek\\\\Downloads\\\\gitRepos\\\\ClaudeToDoAutomation\\\\bot\\\\dist\\\\index.js\")",
-      "Bash(echo \"Bot PID: $!\")"
+      "Bash(echo \"Bot PID: $!\")",
+      "PowerShell(schtasks *)"
     ]
   }
 }

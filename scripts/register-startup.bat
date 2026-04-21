@@ -19,7 +19,7 @@ SET BOT_DIR=%REPO%\bot
 REM ── Register pc-server ─────────────────────────────────────────────
 echo Registering PCServer task...
 schtasks /Create /F /TN "ClaudeAutonomous\PCServer" ^
-  /TR "node \"%PCSERVER_DIR%\dist\index.js\"" ^
+  /TR "cmd /c node \"%PCSERVER_DIR%\dist\index.js\" >> \"%REPO%\pc-server-out.log\" 2>> \"%REPO%\pc-server-err.log\"" ^
   /SC ONLOGON ^
   /RU "%USERNAME%" ^
   /RL HIGHEST ^
@@ -28,19 +28,18 @@ schtasks /Create /F /TN "ClaudeAutonomous\PCServer" ^
 REM ── Register bot ───────────────────────────────────────────────────
 echo Registering Bot task...
 schtasks /Create /F /TN "ClaudeAutonomous\Bot" ^
-  /TR "node \"%BOT_DIR%\dist\index.js\"" ^
+  /TR "cmd /c node \"%BOT_DIR%\dist\index.js\" >> \"%REPO%\bot-out.log\" 2>> \"%REPO%\bot-err.log\"" ^
   /SC ONLOGON ^
   /RU "%USERNAME%" ^
   /RL HIGHEST ^
   /DELAY 0001:00
 
-REM ── Register hourly session trigger ────────────────────────────────
+REM ── Register session trigger (every 15 min) ───────────────────────
 echo Registering SessionTrigger task...
 schtasks /Create /F /TN "ClaudeAutonomous\SessionTrigger" ^
-  /TR "curl -s -X POST http://localhost:8080/session-start" ^
-  /SC HOURLY ^
-  /MO 1 ^
-  /RU "%USERNAME%"
+  /TR "C:\Windows\System32\curl.exe -s -X POST http://localhost:8080/session-start" ^
+  /SC MINUTE ^
+  /MO 15
 
 echo.
 echo Done! Three tasks registered under ClaudeAutonomous\

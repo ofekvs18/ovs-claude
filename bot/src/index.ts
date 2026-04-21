@@ -1,6 +1,12 @@
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
+const ts = () => new Date().toISOString();
+const _log = console.log.bind(console);
+const _err = console.error.bind(console);
+console.log = (...a) => _log(ts(), ...a);
+console.error = (...a) => _err(ts(), ...a);
 import TelegramBot from "node-telegram-bot-api";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -109,6 +115,13 @@ bot.on("message", async (msg) => {
   const text = msg.text?.toLowerCase().trim() ?? "";
 
   // Claim the session
+  if (text === "no" || text === "n") {
+    cancelPending();
+    send("Starting agent now...");
+    startAgent();
+    return;
+  }
+
   if (text === "yes" || text === "y") {
     if (pendingTimeout) {
       cancelPending();

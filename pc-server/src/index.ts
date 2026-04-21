@@ -1,6 +1,12 @@
 import http from "http";
 import { runAll } from "./orchestrator";
 
+const ts = () => new Date().toISOString();
+const _log = console.log.bind(console);
+const _err = console.error.bind(console);
+console.log = (...a) => _log(ts(), ...a);
+console.error = (...a) => _err(ts(), ...a);
+
 const PORT = parseInt(process.env.PORT ?? "3333", 10);
 
 // Shared stop signal — set to true when /stop is called

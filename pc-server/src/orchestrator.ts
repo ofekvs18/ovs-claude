@@ -109,22 +109,24 @@ function runTask(task: Task, stopSignal: { stop: boolean }): "ok" | "stopped" | 
     return "error";
   }
 
-  const result = spawnSync(
-    "claude",
-    [
-      "-p", prompt,
-      "--dangerously-skip-permissions",
-      "--allowedTools", "Read,Write,Edit,Bash,Glob,Grep",
-      "--max-turns", "20",
-      "--output-format", "json",
-    ],
-    {
-      cwd: task.projectPath,
-      stdio: ["ignore", "pipe", "pipe"],
-      encoding: "utf-8",
-      shell: process.platform === "win32",
-    }
-  );
+  // On Windows, pass the prompt via an env var to avoid cmd.exe quoting issues.
+  // PowerShell reads $env:CLAUDE_PROMPT so no shell-escaping of the prompt is needed.
+  const spawnEnv = { ...process.env, CLAUDE_PROMPT: prompt };
+
+  const result = process.platform === "win32"
+    ? spawnSync(
+        "powershell.exe",
+        [
+          "-NoProfile", "-NonInteractive", "-Command",
+          "claude -p $env:CLAUDE_PROMPT --dangerously-skip-permissions --allowedTools 'Read,Write,Edit,Bash,Glob,Grep' --max-turns 20 --output-format json",
+        ],
+        { cwd: task.projectPath, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8", shell: false, env: spawnEnv }
+      )
+    : spawnSync(
+        "claude",
+        ["-p", prompt, "--dangerously-skip-permissions", "--allowedTools", "Read,Write,Edit,Bash,Glob,Grep", "--max-turns", "20", "--output-format", "json"],
+        { cwd: task.projectPath, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8", shell: false, env: spawnEnv }
+      );
 
   if (result.error) {
     console.error(`[orchestrator] ✗ spawn error: ${result.error.message}`);

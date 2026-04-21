@@ -6,7 +6,15 @@
       "PowerShell(Stop-Process *)",
       "PowerShell(if \\($env:ANTHROPIC_API_KEY\\) { \"SET \\(length: $\\($env:ANTHROPIC_API_KEY.Length\\)\\)\" } else { [System.Environment]::GetEnvironmentVariable\\(\"ANTHROPIC_API_KEY\", \"User\"\\) | ForEach-Object { if \\($_\\) { \"SET in User env \\(length: $\\($_.Length\\)\\)\" } else { \"NOT SET\" } } })",
       "PowerShell(Start-Sleep 2; Invoke-RestMethod -Uri http://localhost:3333/status -Method GET | ConvertTo-Json)",
-      "PowerShell(Invoke-RestMethod -Uri http://localhost:3333/run -Method POST | ConvertTo-Json -Depth 5)"
+      "PowerShell(Invoke-RestMethod -Uri http://localhost:3333/run -Method POST | ConvertTo-Json -Depth 5)",
+      "Bash(schtasks //Query //TN \"ClaudeAutonomous\\\\PCServer\")",
+      "Bash(schtasks //Query //TN \"ClaudeAutonomous\\\\Bot\")",
+      "Bash(schtasks //Query //TN \"ClaudeAutonomous\\\\SessionTrigger\")",
+      "Bash(npm run *)",
+      "Bash(schtasks *)",
+      "Bash(netstat -ano)",
+      "Bash(node \"C:\\\\Users\\\\ofek\\\\Downloads\\\\gitRepos\\\\ClaudeToDoAutomation\\\\bot\\\\dist\\\\index.js\")",
+      "Bash(echo \"Bot PID: $!\")"
     ]
   }
 }

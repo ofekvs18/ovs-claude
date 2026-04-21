@@ -1,13 +1,16 @@
+import dotenv from "dotenv";
+import path from "path";
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import TelegramBot from "node-telegram-bot-api";
 
-// ─── Config (all from Railway env vars) ──────────────────────────────────────
+// ─── Config ───────────────────────────────────────────────────────────────────
 const TOKEN       = process.env.TELEGRAM_BOT_TOKEN!;
-const CHAT_ID     = process.env.TELEGRAM_CHAT_ID!;      // your personal chat ID
-const PC_URL      = process.env.PC_WEBHOOK_URL!;         // Cloudflare tunnel URL to your PC
+const CHAT_ID     = process.env.TELEGRAM_CHAT_ID!;
+const PC_URL      = process.env.PC_WEBHOOK_URL ?? "http://localhost:3333";
 const TIMEOUT_MIN = parseInt(process.env.TIMEOUT_MINUTES ?? "30", 10);
 
-if (!TOKEN || !CHAT_ID || !PC_URL) {
-  console.error("Missing required env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, PC_WEBHOOK_URL");
+if (!TOKEN || !CHAT_ID) {
+  console.error("Missing required env vars: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID");
   process.exit(1);
 }
 

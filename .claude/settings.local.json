@@ -4,7 +4,9 @@
       "PowerShell(Start-Process -FilePath \"node\" -ArgumentList \"C:\\\\Users\\\\ofek\\\\Downloads\\\\gitRepos\\\\ClaudeToDoAutomation\\\\pc-server\\\\dist\\\\index.js\" -WindowStyle Hidden -PassThru | Select-Object -ExpandProperty Id)",
       "PowerShell(Start-Sleep 2; Invoke-RestMethod -Uri \"http://localhost:3333/status\" -Method GET | ConvertTo-Json)",
       "PowerShell(Stop-Process *)",
-      "PowerShell(if \\($env:ANTHROPIC_API_KEY\\) { \"SET \\(length: $\\($env:ANTHROPIC_API_KEY.Length\\)\\)\" } else { [System.Environment]::GetEnvironmentVariable\\(\"ANTHROPIC_API_KEY\", \"User\"\\) | ForEach-Object { if \\($_\\) { \"SET in User env \\(length: $\\($_.Length\\)\\)\" } else { \"NOT SET\" } } })"
+      "PowerShell(if \\($env:ANTHROPIC_API_KEY\\) { \"SET \\(length: $\\($env:ANTHROPIC_API_KEY.Length\\)\\)\" } else { [System.Environment]::GetEnvironmentVariable\\(\"ANTHROPIC_API_KEY\", \"User\"\\) | ForEach-Object { if \\($_\\) { \"SET in User env \\(length: $\\($_.Length\\)\\)\" } else { \"NOT SET\" } } })",
+      "PowerShell(Start-Sleep 2; Invoke-RestMethod -Uri http://localhost:3333/status -Method GET | ConvertTo-Json)",
+      "PowerShell(Invoke-RestMethod -Uri http://localhost:3333/run -Method POST | ConvertTo-Json -Depth 5)"
     ]
   }
 }

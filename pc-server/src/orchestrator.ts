@@ -93,22 +93,21 @@ function markDone(task: Task) {
 function runTask(task: Task, stopSignal: { stop: boolean }): "ok" | "stopped" | "error" {
   if (stopSignal.stop) return "stopped";
 
-  const prompt = [
-    `You are working autonomously on the project: ${task.projectName}`,
-    `Project context: ${task.projectContext}`,
-    ``,
-    `Your task: ${task.description}`,
-    ``,
-    `Instructions:`,
-    `- Work in the current directory (the project root)`,
-    `- Make only the changes needed for this specific task`,
-    `- Commit your changes with a meaningful commit message when done`,
-    `- Do not ask for confirmation — work autonomously`,
-  ].join("\n");
+  const prompt =
+    `Project: ${task.projectName}. ` +
+    (task.projectContext ? `Context: ${task.projectContext}. ` : "") +
+    `Task: ${task.description}. ` +
+    `Instructions: work in the current directory, make only the changes needed for this task, ` +
+    `commit your changes with a meaningful commit message when done, do not ask for confirmation.`;
 
   console.log(`\n[orchestrator] ▶ "${task.description}"`);
   console.log(`[orchestrator]   project: ${task.projectName}`);
   console.log(`[orchestrator]   path:    ${task.projectPath}`);
+
+  if (!fs.existsSync(task.projectPath)) {
+    console.error(`[orchestrator] ✗ path does not exist: ${task.projectPath}`);
+    return "error";
+  }
 
   const result = spawnSync(
     "claude",
@@ -138,6 +137,8 @@ function runTask(task: Task, stopSignal: { stop: boolean }): "ok" | "stopped" | 
     return "error";
   }
 
+  console.log(`[orchestrator] stdout: ${result.stdout.slice(0, 2000)}`);
+  console.log(`[orchestrator] stderr: ${result.stderr.slice(0, 500)}`);
   try {
     const out = JSON.parse(result.stdout);
     console.log(

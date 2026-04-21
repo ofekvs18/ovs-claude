@@ -1,0 +1,14 @@
+[pc-server] listening on http://localhost:3333
+[pc-server] Endpoints:
+  POST /run    — start autonomous agent
+  POST /stop   — request graceful stop
+  GET  /status — check if agent is running
+[orchestrator] Found 1 pending task(s).
+
+[orchestrator] ▶ "add a new aa.txt file and write a joke in it"
+[orchestrator]   project: biomarkers
+[orchestrator]   path:    C:\Users\ofek\Downloads\gitRepos\Project\biomarker-pipeline
+[orchestrator] stdout: It looks like your message got cut off. What would you like help with?
+
+[orchestrator] stderr: 
+[orchestrator] ✓ done

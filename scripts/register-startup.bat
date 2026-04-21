@@ -18,34 +18,29 @@ SET BOT_DIR=%REPO%\bot
 
 REM ── Register pc-server ─────────────────────────────────────────────
 echo Registering PCServer task...
-schtasks /Create /F /TN "ClaudeAutonomous\PCServer" ^
-  /TR "cmd /c node \"%PCSERVER_DIR%\dist\index.js\" >> \"%REPO%\pc-server-out.log\" 2>> \"%REPO%\pc-server-err.log\"" ^
-  /SC ONLOGON ^
-  /RU "%USERNAME%" ^
-  /RL HIGHEST ^
-  /DELAY 0000:30
+powershell -Command "$a = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument '\""%REPO%\scripts\launch-pcserver.vbs\""' -WorkingDirectory '%PCSERVER_DIR%'; $t = New-ScheduledTaskTrigger -AtLogOn; $t.Delay = 'PT30S'; $s = New-ScheduledTaskSettingsSet -Hidden; $s.DisallowStartIfOnBatteries = $false; $s.StopIfGoingOnBatteries = $false; Register-ScheduledTask -Force -TaskName 'PCServer' -TaskPath '\ClaudeAutonomous\' -Action $a -Trigger $t -Settings $s -RunLevel Highest | Out-Null"
 
 REM ── Register bot ───────────────────────────────────────────────────
 echo Registering Bot task...
-schtasks /Create /F /TN "ClaudeAutonomous\Bot" ^
-  /TR "cmd /c node \"%BOT_DIR%\dist\index.js\" >> \"%REPO%\bot-out.log\" 2>> \"%REPO%\bot-err.log\"" ^
-  /SC ONLOGON ^
-  /RU "%USERNAME%" ^
-  /RL HIGHEST ^
-  /DELAY 0001:00
+powershell -Command "$a = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument '\""%REPO%\scripts\launch-bot.vbs\""' -WorkingDirectory '%BOT_DIR%'; $t = New-ScheduledTaskTrigger -AtLogOn; $t.Delay = 'PT60S'; $s = New-ScheduledTaskSettingsSet -Hidden; $s.DisallowStartIfOnBatteries = $false; $s.StopIfGoingOnBatteries = $false; Register-ScheduledTask -Force -TaskName 'Bot' -TaskPath '\ClaudeAutonomous\' -Action $a -Trigger $t -Settings $s -RunLevel Highest | Out-Null"
 
-REM ── Register session trigger (every 15 min) ───────────────────────
+REM ── Register session trigger (hourly at hh:05) ───────────────────
 echo Registering SessionTrigger task...
 schtasks /Create /F /TN "ClaudeAutonomous\SessionTrigger" ^
   /TR "C:\Windows\System32\curl.exe -s -X POST http://localhost:8080/session-start" ^
-  /SC MINUTE ^
-  /MO 15
+  /SC HOURLY ^
+  /MO 1 ^
+  /ST 00:05
+
+REM ── Disable battery restrictions on SessionTrigger ────────────────
+echo Applying power settings to SessionTrigger...
+powershell -Command "$t = Get-ScheduledTask -TaskName 'SessionTrigger' -TaskPath '\ClaudeAutonomous\'; $t.Settings.DisallowStartIfOnBatteries = $false; $t.Settings.StopIfGoingOnBatteries = $false; Set-ScheduledTask -TaskName 'SessionTrigger' -TaskPath '\ClaudeAutonomous\' -Settings $t.Settings"
 
 echo.
 echo Done! Three tasks registered under ClaudeAutonomous\
 echo   PCServer        — starts 30s after login  (port 3333)
 echo   Bot             — starts 60s after login  (port 8080)
-echo   SessionTrigger  — fires at the top of every hour
+echo   SessionTrigger  — fires at hh:05 every hour
 echo.
 echo To start tasks immediately without rebooting:
 echo   schtasks /Run /TN "ClaudeAutonomous\PCServer"

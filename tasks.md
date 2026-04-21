@@ -13,12 +13,12 @@ Format rules (the orchestrator parses this file):
 path: C:\Users\ofek\Downloads\gitRepos\Project\biomarker-pipeline
 context: Python bioinformatics pipeline for biomarker analysis
 
-- [ ] verify hydra migration is done | priority: high
-- [ ] commit changes to git
+- [x] verify hydra migration is done | priority: high
+- [x] commit changes to git | priority: medium
 
 
 ## project: claude automation
 path: C:\Users\ofek\Downloads\gitRepos\ClaudeToDoAutomation
 context: node project to automate todo list with claude
 
-- [ ] make the code run at each hour at hh:05 instead of each 15 minutest from start | priority: high
+- [x] make the code run at each hour at hh:05 instead of each 15 minutest from start | priority: high

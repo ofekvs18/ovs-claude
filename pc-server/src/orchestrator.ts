@@ -141,13 +141,24 @@ function runTask(task: Task, stopSignal: { stop: boolean }): "ok" | "stopped" | 
 
   console.log(`[orchestrator] stdout: ${result.stdout.slice(0, 2000)}`);
   console.log(`[orchestrator] stderr: ${result.stderr.slice(0, 500)}`);
+
+  if (!result.stdout || !result.stdout.trim()) {
+    console.error(`[orchestrator] ✗ no output from claude (command may not have run)`);
+    return "error";
+  }
+
   try {
     const out = JSON.parse(result.stdout);
+    if (out.is_error) {
+      console.error(`[orchestrator] ✗ claude reported an error: ${JSON.stringify(out)}`);
+      return "error";
+    }
     console.log(
       `[orchestrator] ✓ done — ${out.num_turns ?? "?"} turns, $${out.cost_usd?.toFixed(4) ?? "?"}`
     );
   } catch {
-    console.log(`[orchestrator] ✓ done`);
+    console.error(`[orchestrator] ✗ failed to parse claude output: ${result.stdout.slice(0, 500)}`);
+    return "error";
   }
 
   return "ok";
